@@ -131,6 +131,7 @@ export default function Layout( { blockEditorSettings } ) {
 											/>
 										</div>
 										<InspectorAdditions
+											onSelectMenu={ selectMenu }
 											menuId={ selectedMenuId }
 											onDeleteMenu={ deleteMenu }
 										/>

@@ -14,3 +14,16 @@
 .edit-navigation-inspector-additions__delete-menu-panel {
 	text-align: center;
 }
+.edit-navigation-header__manage-locations__menage-locations-modal__menu-entry {
+	display: flex;
+	margin-bottom: $grid-unit-15;
+	margin-top: $grid-unit-15;
+	.components-custom-select-control,
+	.components-custom-select-control__button {
+		width: 100%;
+	}
+	button {
+		align-self: flex-end;
+	}
+}
+

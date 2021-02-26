@@ -20,7 +20,6 @@ import {
  * Internal dependencies
  */
 import SaveButton from './save-button';
-import ManageLocations from './manage-locations';
 import AddMenu from '../add-menu';
 
 export default function Header( {
@@ -106,21 +105,6 @@ export default function Header( {
 								onCreate={ onSelectMenu }
 							/>
 						) }
-					/>
-
-					<Dropdown
-						contentClassName="edit-navigation-header__manage-locations"
-						position="bottom left"
-						renderToggle={ ( { isOpen, onToggle } ) => (
-							<Button
-								isTertiary
-								aria-expanded={ isOpen }
-								onClick={ onToggle }
-							>
-								{ __( 'Manage locations' ) }
-							</Button>
-						) }
-						renderContent={ () => <ManageLocations /> }
 					/>
 
 					<SaveButton navigationPost={ navigationPost } />
