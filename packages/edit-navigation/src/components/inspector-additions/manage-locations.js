@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { useSelect } from '@wordpress/data';
-import { useContext, useState } from '@wordpress/element';
+import { useContext } from '@wordpress/element';
 import {
 	Spinner,
 	SelectControl,
@@ -18,21 +18,27 @@ import { __ } from '@wordpress/i18n';
  */
 import { useMenuLocations, MenuIdContext } from '../../hooks';
 
-export default function ManageLocations( { onSelectMenu } ) {
+export default function ManageLocations( {
+	onSelectMenu,
+	isModalOpen,
+	openModal,
+	closeModal,
+} ) {
 	const menus = useSelect( ( select ) => select( 'core' ).getMenus(), [] );
 
 	const selectedMenuId = useContext( MenuIdContext );
-	const [ isOpen, setOpen ] = useState( false );
-	const openModal = () => setOpen( true );
-	const closeModal = () => setOpen( false );
 
-	const { menuLocations, assignMenuToLocation } = useMenuLocations();
+	const {
+		menuLocations,
+		assignMenuToLocation,
+		toggleMenuToLocation,
+	} = useMenuLocations();
 	const menusWithSelection = menuLocations.map( ( themeLocation ) => (
 		<CheckboxControl
 			key={ themeLocation.name }
 			checked={ themeLocation.menu === selectedMenuId }
 			onChange={ () =>
-				assignMenuToLocation( themeLocation.name, selectedMenuId )
+				toggleMenuToLocation( themeLocation.name, selectedMenuId )
 			}
 			label={ themeLocation.name }
 		/>
@@ -62,17 +68,20 @@ export default function ManageLocations( { onSelectMenu } ) {
 				value={ menuLocation.menu }
 				options={ [
 					{ value: 0, label: __( '-' ), key: 0 },
-					...menus.map( ( menu ) => ( {
-						key: menu.id,
-						value: menu.id,
-						label: menu.name,
+					...menus.map( ( { id, name } ) => ( {
+						key: id,
+						value: id,
+						label: name,
 					} ) ),
 				] }
 				onChange={ ( menuId ) => {
 					assignMenuToLocation( menuLocation.name, Number( menuId ) );
 				} }
 			/>
-			<Button isTertiary onClick={ () => onSelectMenu( menuLocation ) }>
+			<Button
+				isTertiary
+				onClick={ () => onSelectMenu( menuLocation.menu ) }
+			>
 				{ __( 'Edit' ) }
 			</Button>
 		</div>
@@ -85,13 +94,13 @@ export default function ManageLocations( { onSelectMenu } ) {
 				<Button
 					isPrimary
 					className="edit-navigation-header__manage-locations__open-manage-locations-modal-button"
-					aria-expanded={ isOpen }
+					aria-expanded={ isModalOpen }
 					onClick={ openModal }
 				>
 					{ __( 'Manage locations' ) }
 				</Button>
 			</PanelBody>
-			{ isOpen && (
+			{ isModalOpen && (
 				<Modal
 					title={ __( 'Manage Locations' ) }
 					onRequestClose={ closeModal }

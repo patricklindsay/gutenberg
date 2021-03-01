@@ -18,6 +18,9 @@ export default function InspectorAdditions( {
 	menuId,
 	onDeleteMenu,
 	onSelectMenu,
+	isManageLocationsModalOpen,
+	closeManageLocationsModal,
+	openManageLocationsModal,
 } ) {
 	const selectedBlock = useSelect(
 		( select ) => select( 'core/block-editor' ).getSelectedBlock(),
@@ -32,7 +35,12 @@ export default function InspectorAdditions( {
 		<InspectorControls>
 			<PanelBody title={ __( 'Menu Settings' ) }>
 				<NameEditor />
-				<ManageLocations onSelectMenu={ onSelectMenu } />
+				<ManageLocations
+					onSelectMenu={ onSelectMenu }
+					isModalOpen={ isManageLocationsModalOpen }
+					closeModal={ closeManageLocationsModal }
+					openModal={ openManageLocationsModal }
+				/>
 				<AutoAddPagesPanel menuId={ menuId } />
 				<DeleteMenuPanel onDeleteMenu={ onDeleteMenu } />
 			</PanelBody>

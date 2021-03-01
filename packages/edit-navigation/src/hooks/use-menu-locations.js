@@ -48,7 +48,7 @@ export default function useMenuLocations() {
 			const oldMenuId = menuLocationsByName[ locationName ].menu;
 
 			const newMenuLocationsByName = merge( menuLocationsByName, {
-				[ locationName ]: newMenuId,
+				[ locationName ]: { menu: newMenuId },
 			} );
 
 			setMenuLocationsByName( newMenuLocationsByName );
@@ -61,14 +61,22 @@ export default function useMenuLocations() {
 		[ menuLocationsByName ]
 	);
 
+	const toggleMenuToLocation = ( locationName, newMenuId ) => {
+		const idToSet =
+			menuLocationsByName[ locationName ].menu === newMenuId
+				? 0
+				: newMenuId;
+		assignMenuToLocation( locationName, idToSet );
+	};
+
 	const menuLocations = useMemo(
-		() =>
-			menuLocationsByName ? Object.values( menuLocationsByName ) : [],
+		() => Object.values( menuLocationsByName || {} ),
 		[ menuLocationsByName ]
 	);
 
 	return {
 		menuLocations,
 		assignMenuToLocation,
+		toggleMenuToLocation,
 	};
 }
