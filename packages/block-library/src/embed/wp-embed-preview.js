@@ -58,8 +58,15 @@ export default function WpEmbedPreview( { html } ) {
 				return;
 			}
 
-			const focusEvent = new FocusEvent( 'focus', { bubbles: true } );
-			activeElement.dispatchEvent( focusEvent );
+			// The focus event should *not* bubble:
+			// https://w3c.github.io/uievents/#event-type-focus
+			activeElement.dispatchEvent( new FocusEvent( 'focus' ) );
+
+			// The focusin event *should* bubble:
+			// https://w3c.github.io/uievents/#event-type-focusin
+			activeElement.dispatchEvent(
+				new FocusEvent( 'focusin', { bubbles: true } )
+			);
 		}
 
 		defaultView.addEventListener( 'message', resizeWPembeds );
