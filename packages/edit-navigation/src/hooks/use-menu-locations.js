@@ -29,7 +29,7 @@ export default function useMenuLocations() {
 		const fetchMenuLocationsByName = async () => {
 			const newMenuLocationsByName = await apiFetch( {
 				method: 'GET',
-				path: '/__experimental/menu-locations',
+				path: '/__experimental/menu-locations/',
 			} );
 
 			if ( isMounted ) {
@@ -53,12 +53,10 @@ export default function useMenuLocations() {
 
 			setMenuLocationsByName( newMenuLocationsByName );
 
-			const promises = [ oldMenuId, newMenuId ]
+			[ oldMenuId, newMenuId ]
 				.filter( Boolean )
 				.map( withLocations( newMenuLocationsByName ) )
-				.map( saveMenu );
-
-			await Promise.all( promises );
+				.forEach( saveMenu );
 		},
 		[ menuLocationsByName ]
 	);
