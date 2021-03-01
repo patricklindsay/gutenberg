@@ -1,10 +1,10 @@
 [
     {
         "clientId": "_clientId_0",
-        "name": "core/table-of-contents",
+        "name": "core/query-title",
         "isValid": true,
         "attributes": {
-            "onlyIncludeCurrentPage": false
+            "level": 2
         },
         "innerBlocks": [],
         "originalContent": ""
