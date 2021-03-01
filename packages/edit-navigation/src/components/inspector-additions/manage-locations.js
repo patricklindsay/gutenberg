@@ -80,6 +80,7 @@ export default function ManageLocations( {
 			/>
 			<Button
 				isTertiary
+				className="edit-navigation-header__manage-locations__menage-locations-modal__edit-button"
 				onClick={ () => onSelectMenu( menuLocation.menu ) }
 			>
 				{ __( 'Edit' ) }
