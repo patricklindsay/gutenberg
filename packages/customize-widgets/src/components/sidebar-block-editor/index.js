@@ -8,15 +8,12 @@ import {
 	ObserveTyping,
 	WritingFlow,
 } from '@wordpress/block-editor';
-import {
-	DropZoneProvider,
-	FocusReturnProvider,
-	SlotFillProvider,
-} from '@wordpress/components';
+import { DropZoneProvider, SlotFillProvider } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
+import Header from '../header';
 import useSidebarBlockEditor from './use-sidebar-block-editor';
 
 export default function SidebarBlockEditor( { sidebar } ) {
@@ -25,21 +22,21 @@ export default function SidebarBlockEditor( { sidebar } ) {
 	return (
 		<SlotFillProvider>
 			<DropZoneProvider>
-				<FocusReturnProvider>
-					<BlockEditorProvider
-						value={ blocks }
-						onInput={ onInput }
-						onChange={ onChange }
-					>
-						<BlockSelectionClearer>
-							<WritingFlow>
-								<ObserveTyping>
-									<BlockList />
-								</ObserveTyping>
-							</WritingFlow>
-						</BlockSelectionClearer>
-					</BlockEditorProvider>
-				</FocusReturnProvider>
+				<BlockEditorProvider
+					value={ blocks }
+					onInput={ onInput }
+					onChange={ onChange }
+				>
+					<Header />
+
+					<BlockSelectionClearer>
+						<WritingFlow>
+							<ObserveTyping>
+								<BlockList />
+							</ObserveTyping>
+						</WritingFlow>
+					</BlockSelectionClearer>
+				</BlockEditorProvider>
 			</DropZoneProvider>
 		</SlotFillProvider>
 	);
