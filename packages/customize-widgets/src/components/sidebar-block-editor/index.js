@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { useMemo } from '@wordpress/element';
 import {
 	BlockEditorProvider,
 	BlockList,
@@ -11,6 +12,11 @@ import {
 import { DropZoneProvider, SlotFillProvider } from '@wordpress/components';
 
 /**
+ * External dependencies
+ */
+import { useDialogState } from 'reakit/Dialog';
+
+/**
  * Internal dependencies
  */
 import Header from '../header';
@@ -18,6 +24,16 @@ import useSidebarBlockEditor from './use-sidebar-block-editor';
 
 export default function SidebarBlockEditor( { sidebar } ) {
 	const [ blocks, onInput, onChange ] = useSidebarBlockEditor( sidebar );
+	const inserter = useDialogState( {
+		modal: false,
+		animated: 150,
+	} );
+	const settings = useMemo(
+		() => ( {
+			__experimentalSetIsInserterOpened: inserter.setVisible,
+		} ),
+		[ inserter.setVisible ]
+	);
 
 	return (
 		<SlotFillProvider>
@@ -26,8 +42,9 @@ export default function SidebarBlockEditor( { sidebar } ) {
 					value={ blocks }
 					onInput={ onInput }
 					onChange={ onChange }
+					settings={ settings }
 				>
-					<Header />
+					<Header inserter={ inserter } />
 
 					<BlockSelectionClearer>
 						<WritingFlow>
