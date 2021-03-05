@@ -60,5 +60,6 @@
 		"__experimentalTextDecoration": true
 	},
 	"editorStyle": "wp-block-navigation-editor",
-	"style": "wp-block-navigation"
+	"style": "wp-block-navigation",
+	"script": "file:./script.js"
 }
