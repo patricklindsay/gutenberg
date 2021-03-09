@@ -2,8 +2,7 @@
  * WordPress dependencies
  */
 import { __experimentalGetSettings } from '@wordpress/date';
-import { withSelect, withDispatch, useSelect } from '@wordpress/data';
-import { compose } from '@wordpress/compose';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { DateTimePicker } from '@wordpress/components';
 import { useRef, useState } from '@wordpress/element';
 
@@ -16,10 +15,12 @@ function getDayOfTheMonth( date = new Date(), firstDay = true ) {
 	).toISOString();
 }
 
-export function PostSchedule( { date, onUpdateDate } ) {
-	const [ currentMonth, setCurrentMonth ] = useState(
-		getDayOfTheMonth( date )
-	);
+export default function PostSchedule() {
+	const date = useSelect( select => select( 'core/editor' ).getEditedPostAttribute( 'date' ), [] );
+	const { editPost } = useDispatch( 'core/editor' );
+	const onUpdateDate = ( date ) => editPost( { date } );
+
+	const [ currentMonth, setCurrentMonth ] = useState( getDayOfTheMonth( date ) );
 
 	// Pick up published and schduled site posts.
 	const events = useSelect( ( select ) => (
@@ -37,6 +38,7 @@ export function PostSchedule( { date, onUpdateDate } ) {
 
 	const ref = useRef();
 	const settings = __experimentalGetSettings();
+
 	// To know if the current timezone is a 12 hour time with look for "a" in the time format
 	// We also make sure this a is not escaped by a "/"
 	const is12HourTime = /a(?!\\)/i.test(
@@ -64,18 +66,3 @@ export function PostSchedule( { date, onUpdateDate } ) {
 		/>
 	);
 }
-
-export default compose( [
-	withSelect( ( select ) => {
-		return {
-			date: select( 'core/editor' ).getEditedPostAttribute( 'date' ),
-		};
-	} ),
-	withDispatch( ( dispatch ) => {
-		return {
-			onUpdateDate( date ) {
-				dispatch( 'core/editor' ).editPost( { date } );
-			},
-		};
-	} ),
-] )( PostSchedule );
