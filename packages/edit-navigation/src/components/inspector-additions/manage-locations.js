@@ -9,9 +9,8 @@ import {
 	CheckboxControl,
 	Button,
 	Modal,
-	PanelBody,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -31,24 +30,52 @@ export default function ManageLocations( {
 	const {
 		menuLocations,
 		assignMenuToLocation,
-		toggleMenuToLocation,
+		toggleMenuLocationAssignment,
 	} = useMenuLocations();
-	const menusWithSelection = menuLocations.map( ( themeLocation ) => (
-		<CheckboxControl
-			key={ themeLocation.name }
-			checked={ themeLocation.menu === selectedMenuId }
-			onChange={ () =>
-				toggleMenuToLocation( themeLocation.name, selectedMenuId )
-			}
-			label={ themeLocation.name }
-		/>
-	) );
+
+	const themeLocationCountTextMain = sprintf(
+		// translators: Number of available theme locations.
+		__(
+			'Your current theme provides with %d different locations to place menu.'
+		),
+		menuLocations.length
+	);
+
+	const themeLocationCountTextModal = sprintf(
+		// translators: Number of available theme locations.
+		__(
+			'Your current theme provides with %d different locations. Select which menu appears in each location.'
+		),
+		menuLocations.length
+	);
+
+	const menusWithSelection = menuLocations.map( ( { name, menu } ) => {
+		const menuOnLocation = menus
+			.filter( ( { id } ) => ! [ 0, selectedMenuId ].includes( id ) )
+			.find( ( { id } ) => id === menu );
+
+		return (
+			<CheckboxControl
+				key={ name }
+				checked={ menu === selectedMenuId }
+				onChange={ () =>
+					toggleMenuLocationAssignment( name, selectedMenuId )
+				}
+				label={ name }
+				help={
+					menuOnLocation &&
+					sprintf(
+						// translators: menu name.
+						__( 'Currently using %s' ),
+						menuOnLocation.name
+					)
+				}
+			/>
+		);
+	} );
+
 	if ( ! menus || ! menuLocations ) {
 		return <Spinner />;
-	}
-
-	if ( ! menus.length ) {
-		return <p>{ __( 'There are no available menus.' ) }</p>;
 	}
 
 	if ( ! menuLocations.length ) {
@@ -58,11 +85,11 @@ export default function ManageLocations( {
 	const menuLocationCard = menuLocations.map( ( menuLocation ) => (
 		<div
 			key={ menuLocation.name }
-			className="edit-navigation-header__manage-locations__menage-locations-modal__menu-entry"
+			className="edit-navigation-manage-locations__menu-entry"
 		>
 			<SelectControl
 				key={ menuLocation.name }
-				className="edit-navigation-header__manage-locations__menage-locations-modal__select-menu"
+				className="edit-navigation-manage-locations__select-menu"
 				label={ menuLocation.description }
 				labelPosition="top"
 				value={ menuLocation.menu }
@@ -79,8 +106,11 @@ export default function ManageLocations( {
 				} }
 			/>
 			<Button
-				isTertiary
-				className="edit-navigation-header__manage-locations__menage-locations-modal__edit-button"
+				isSecondary
+				style={ {
+					visibility: !! menuLocation.menu ? 'visible' : 'hidden',
+				} }
+				className="edit-navigation-manage-locations__edit-button"
 				onClick={ () => onSelectMenu( menuLocation.menu ) }
 			>
 				{ __( 'Edit' ) }
@@ -90,34 +120,27 @@ export default function ManageLocations( {
 
 	return (
 		<>
-			<PanelBody>
-				{ menusWithSelection }
-				<Button
-					isPrimary
-					className="edit-navigation-header__manage-locations__open-manage-locations-modal-button"
-					aria-expanded={ isModalOpen }
-					onClick={ openModal }
-				>
-					{ __( 'Manage locations' ) }
-				</Button>
-			</PanelBody>
+			<div className="edit-navigation-manage-locations__theme-location-text-main">
+				{ themeLocationCountTextMain }
+			</div>
+			{ menusWithSelection }
+			<Button
+				isSecondary
+				className="edit-navigation-manage-locations__open-menu-locations-modal-button"
+				aria-expanded={ isModalOpen }
+				onClick={ openModal }
+			>
+				{ __( 'Manage locations' ) }
+			</Button>
 			{ isModalOpen && (
 				<Modal
 					title={ __( 'Manage Locations' ) }
 					onRequestClose={ closeModal }
 				>
-					<div>
-						{ __( `Number of available theme locations:` ) +
-							' ' +
-							menuLocations.length }
-					</div>
-					<div>
-						{ __( `Select which menu appears in each location.` ) }
+					<div className="edit-navigation-manage-locations__theme-location-text-modal">
+						{ themeLocationCountTextModal }
 					</div>
 					{ menuLocationCard }
-					<Button isSecondary onClick={ closeModal }>
-						Close Modal
-					</Button>
 				</Modal>
 			) }
 		</>

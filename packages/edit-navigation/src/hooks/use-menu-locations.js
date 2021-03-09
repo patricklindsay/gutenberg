@@ -61,7 +61,7 @@ export default function useMenuLocations() {
 		[ menuLocationsByName ]
 	);
 
-	const toggleMenuToLocation = ( locationName, newMenuId ) => {
+	const toggleMenuLocationAssignment = ( locationName, newMenuId ) => {
 		const idToSet =
 			menuLocationsByName[ locationName ].menu === newMenuId
 				? 0
@@ -77,6 +77,6 @@ export default function useMenuLocations() {
 	return {
 		menuLocations,
 		assignMenuToLocation,
-		toggleMenuToLocation,
+		toggleMenuLocationAssignment,
 	};
 }
