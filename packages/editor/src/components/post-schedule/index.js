@@ -5,6 +5,12 @@ import { __experimentalGetSettings } from '@wordpress/date';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { DateTimePicker } from '@wordpress/components';
 import { useRef, useState } from '@wordpress/element';
+import { store as coreStore } from '@wordpress/core-data';
+
+/**
+ * Internal dependencies
+ */
+import { store as editorStore } from '../../store';
 
 function getDayOfTheMonth( date = new Date(), firstDay = true ) {
 	const d = new Date( date );
@@ -16,25 +22,33 @@ function getDayOfTheMonth( date = new Date(), firstDay = true ) {
 }
 
 export default function PostSchedule() {
-	const date = useSelect( select => select( 'core/editor' ).getEditedPostAttribute( 'date' ), [] );
-	const { editPost } = useDispatch( 'core/editor' );
-	const onUpdateDate = ( date ) => editPost( { date } );
+	const date = useSelect(
+		( select ) => select( editorStore ).getEditedPostAttribute( 'date' ),
+		[]
+	);
+	const { editPost } = useDispatch( editorStore );
+	const onUpdateDate = ( postDate ) => editPost( { date: postDate } );
 
-	const [ currentMonth, setCurrentMonth ] = useState( getDayOfTheMonth( date ) );
+	const [ currentMonth, setCurrentMonth ] = useState(
+		getDayOfTheMonth( date )
+	);
 
 	// Pick up published and schduled site posts.
-	const events = useSelect( ( select ) => (
-		( select( 'core' ).getEntityRecords( 'postType', 'post', {
-			status: 'publish,future',
-			after: getDayOfTheMonth( currentMonth ),
-			before: getDayOfTheMonth( currentMonth, false ),
-		} ) || [] )
-		.map( ( { title, type, date } ) => ( {
-			title: title?.raw,
-			type,
-			date: new Date( date ),
-		} ) )
-	), [ currentMonth ] );
+	const events = useSelect(
+		( select ) =>
+			(
+				select( coreStore ).getEntityRecords( 'postType', 'post', {
+					status: 'publish,future',
+					after: getDayOfTheMonth( currentMonth ),
+					before: getDayOfTheMonth( currentMonth, false ),
+				} ) || []
+			).map( ( { title, type, date: eventDate } ) => ( {
+				title: title?.raw,
+				type,
+				date: new Date( eventDate ),
+			} ) ),
+		[ currentMonth ]
+	);
 
 	const ref = useRef();
 	const settings = __experimentalGetSettings();
