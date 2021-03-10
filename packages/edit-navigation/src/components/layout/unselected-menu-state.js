@@ -27,7 +27,9 @@ export default function UnselectedMenuState( {
 					<AddMenu
 						onCreate={ onCreate }
 						titleText={ __( 'Create your first menu' ) }
-						helpText={ __( 'A short descriptive name for your menu.' ) }
+						helpText={ __(
+							'A short descriptive name for your menu.'
+						) }
 						focusInputOnMount
 					/>
 				) }
