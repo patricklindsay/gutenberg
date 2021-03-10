@@ -13,7 +13,11 @@ import { NameEditor } from '../name-editor';
 import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-export default function InspectorAdditions( { menuId, onDeleteMenu } ) {
+export default function InspectorAdditions( {
+	menuId,
+	onDeleteMenu,
+	isMenuBeingDeleted,
+} ) {
 	const selectedBlock = useSelect(
 		( select ) => select( 'core/block-editor' ).getSelectedBlock(),
 		[]
@@ -28,7 +32,10 @@ export default function InspectorAdditions( { menuId, onDeleteMenu } ) {
 			<PanelBody title={ __( 'Menu Settings' ) }>
 				<NameEditor />
 				<AutoAddPagesPanel menuId={ menuId } />
-				<DeleteMenuPanel onDeleteMenu={ onDeleteMenu } />
+				<DeleteMenuPanel
+					onDeleteMenu={ onDeleteMenu }
+					isMenuBeingDeleted={ isMenuBeingDeleted }
+				/>
 			</PanelBody>
 		</InspectorControls>
 	);

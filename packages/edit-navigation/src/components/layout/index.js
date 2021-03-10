@@ -24,7 +24,7 @@ import { useMemo, useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import EmptyState from './empty-state';
+import UnselectedMenuState from './unselected-menu-state';
 import {
 	IsMenuNameControlFocusedContext,
 	MenuIdContext,
@@ -54,8 +54,10 @@ export default function Layout( { blockEditorSettings } ) {
 		hasFinishedInitialLoad,
 		selectedMenuId,
 		navigationPost,
+		isMenuBeingDeleted,
 		selectMenu,
 		deleteMenu,
+		isMenuSelected,
 	} = useNavigationEditor();
 
 	const [ blocks, onInput, onChange ] = useNavigationBlockEditor(
@@ -65,10 +67,18 @@ export default function Layout( { blockEditorSettings } ) {
 	useMenuNotifications( selectedMenuId );
 
 	const hasMenus = !! menus?.length;
-	const isBlockEditorReady = !! ( hasMenus && navigationPost );
 
+	const isBlockEditorReady = !! (
+		hasMenus &&
+		navigationPost &&
+		isMenuSelected
+	);
 	return (
 		<ErrorBoundary>
+			<div
+				hidden={ ! isMenuBeingDeleted }
+				className={ 'edit-navigation-layout__overlay' }
+			/>
 			<SlotFillProvider>
 				<DropZoneProvider>
 					<BlockEditorKeyboardShortcuts.Register />
@@ -92,6 +102,7 @@ export default function Layout( { blockEditorSettings } ) {
 								) }
 							>
 								<Header
+									isMenuSelected={ isMenuSelected }
 									isPending={ ! hasLoadedMenus }
 									menus={ menus }
 									selectedMenuId={ selectedMenuId }
@@ -101,9 +112,14 @@ export default function Layout( { blockEditorSettings } ) {
 
 								{ ! hasFinishedInitialLoad && <Spinner /> }
 
-								{ hasFinishedInitialLoad && ! hasMenus && (
-									<EmptyState />
-								) }
+								{ ! isMenuSelected &&
+									hasFinishedInitialLoad && (
+										<UnselectedMenuState
+											onSelectMenu={ selectMenu }
+											onCreate={ selectMenu }
+											menus={ menus }
+										/>
+									) }
 
 								{ isBlockEditorReady && (
 									<BlockEditorProvider
@@ -120,6 +136,7 @@ export default function Layout( { blockEditorSettings } ) {
 										<NavigationEditorShortcuts
 											saveBlocks={ savePost }
 										/>
+
 										<div
 											className="edit-navigation-layout__canvas"
 											ref={ canvasRef }
@@ -132,6 +149,9 @@ export default function Layout( { blockEditorSettings } ) {
 										<InspectorAdditions
 											menuId={ selectedMenuId }
 											onDeleteMenu={ deleteMenu }
+											isMenuBeingDeleted={
+												isMenuBeingDeleted
+											}
 										/>
 										<BlockInspector
 											bubblesVirtually={ false }

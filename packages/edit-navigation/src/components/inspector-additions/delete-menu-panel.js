@@ -4,12 +4,16 @@
 import { PanelBody, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-export default function DeleteMenuPanel( { onDeleteMenu } ) {
+export default function DeleteMenuPanel( {
+	onDeleteMenu,
+	isMenuBeingDeleted,
+} ) {
 	return (
 		<PanelBody className="edit-navigation-inspector-additions__delete-menu-panel">
 			<Button
 				isLink
 				isDestructive
+				isBusy={ isMenuBeingDeleted }
 				onClick={ () => {
 					if (
 						// eslint-disable-next-line no-alert
