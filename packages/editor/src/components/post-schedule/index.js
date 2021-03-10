@@ -35,18 +35,22 @@ export default function PostSchedule() {
 
 	// Pick up published and schduled site posts.
 	const events = useSelect(
-		( select ) =>
-			(
+		( select ) => {
+			const postId = select( editorStore ).getCurrentPostId();
+
+			return (
 				select( coreStore ).getEntityRecords( 'postType', 'post', {
 					status: 'publish,future',
 					after: getDayOfTheMonth( currentMonth ),
 					before: getDayOfTheMonth( currentMonth, false ),
+					exclude: [ postId ],
 				} ) || []
 			).map( ( { title, type, date: eventDate } ) => ( {
 				title: title?.raw,
 				type,
 				date: new Date( eventDate ),
-			} ) ),
+			} ) );
+		},
 		[ currentMonth ]
 	);
 
