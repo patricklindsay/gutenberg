@@ -2,7 +2,6 @@
  * External dependencies
  */
 import moment from 'moment';
-import classnames from 'classnames';
 
 // react-dates doesn't tree-shake correctly, so we import from the individual
 // component here, to avoid including too much of the library
@@ -12,22 +11,55 @@ import DayPickerSingleDateController from 'react-dates/lib/components/DayPickerS
  * WordPress dependencies
  */
 import { Component, createRef } from '@wordpress/element';
-import { isRTL } from '@wordpress/i18n';
+import { isRTL, __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import { Tooltip } from '../';
 
 /**
  * Module Constants
  */
 const TIMEZONELESS_FORMAT = 'YYYY-MM-DDTHH:mm:ss';
 
-function DatePickerDay( { day, events } ) {
+function renderTooltipContent( events ) {
+	const needToPrune = events.length > 4;
+	const eventsToRender = needToPrune ? events.slice( 0, 3 ) : events;
+	if ( needToPrune ) {
+		eventsToRender.push( {
+			title: __( '…and more' ),
+		} );
+	}
+
 	return (
-		<div
-			className={ classnames( 'components-datetime__date__day', {
-				'has-events': events?.length,
-			} ) }
-		>
-			{ day.format( 'D' ) }
+		<div className="components-datetime__date-day-events">
+			<ul>
+				{ eventsToRender.map( ( event, ind ) => (
+					<li key={ `event-${ ind }` }>
+						{ event.title || __( 'No title' ) }
+					</li>
+				) ) }
+			</ul>
 		</div>
+	);
+}
+
+function DatePickerDay( { day, events } ) {
+	if ( ! events?.length ) {
+		return (
+			<div className="components-datetime__date__day">
+				{ day.format( 'D' ) }
+			</div>
+		);
+	}
+
+	return (
+		<Tooltip text={ renderTooltipContent( events ) }>
+			<div className="components-datetime__date__day has-events">
+				{ day.format( 'D' ) }
+			</div>
+		</Tooltip>
 	);
 }
 
